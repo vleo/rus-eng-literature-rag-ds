@@ -1,261 +1,62 @@
-Вот обновленный README.md для новой структуры проекта с pyproject.toml:
+# lit_rag_ds
 
-# RAG система для русской литературы
+A lit RAG data science project
 
-Система для семантического поиска и анализа русскоязычных художественных произведений с использованием RAG (Retrieval-Augmented Generation) и DeepSeek API.
+## Overview
 
-## 🚀 Быстрый старт
+This project implements a Retrieval-Augmented Generation (RAG) system for data science applications. It provides tools for semantic search, document analysis, and AI-powered insights extraction.
 
-### 1. Установка проекта
+## Installation
 
-```bash
-# Установка в режиме разработки
-pip install -e .
+### Prerequisites
+- Python 3.8 or higher
+- pip
 
-# Или используйте скрипт установки
-./setup.sh
-```
-
-### 2. Настройка окружения
-
-Скопируйте файл `.env.example` в `.env` и добавьте ваш API ключ DeepSeek:
-
-```bash
-cp .env.example .env
-```
-
-Отредактируйте `.env` файл:
-```env
-DEEPSEEK_API_KEY=your_actual_api_key_here
-```
-
-### 3. Добавление книг
-
-Поместите FB2 файлы в директорию `data/fb2_books/`
-
-### 4. Загрузка книг в систему
-
-```bash
-# Используйте установленную команду
-rag-load-books
-
-# Или через Python
-python -m src.load_books
-```
-
-### 5. Запуск системы
-
-```bash
-# Используйте установленную команду
-literature-rag
-
-# Или через Python
-python main.py
-```
-
-## 📁 Структура проекта
-
-```
-russian_literature_rag/
-├── pyproject.toml           # Конфигурация проекта и зависимости
-├── README.md               # Документация
-├── .env.example            # Шаблон переменных окружения
-├── .gitignore             # Git ignore правила
-├── setup.sh               # Скрипт установки
-├── main.py                # Основной скрипт запуска
-├── src/                   # Исходный код пакета
-│   ├── __init__.py        # Инициализация пакета
-│   ├── rag_system.py      # Основная RAG система
-│   ├── optimized_rag.py   # Оптимизированная версия
-│   ├── fb2_loader.py      # Загрузчик FB2 файлов
-│   ├── text_chunker.py    # Оптимизатор текста
-│   └── load_books.py      # Утилита загрузки
-├── tests/                 # Тесты
-│   ├── __init__.py
-│   └── test_basic.py
-├── examples/              # Примеры и демо
-│   └── demo_questions.py
-├── data/
-│   └── fb2_books/         # FB2 файлы книг
-│       └── README.md
-├── indices/               # Сохраненные векторные индексы
-│   └── README.md
-└── logs/                  # Логи работы
-    └── README.md
-```
-
-## 🛠 Установка и разработка
-
-### Базовая установка
+### Install in development mode
 ```bash
 pip install -e .
 ```
 
-### Установка с дополнительными возможностями
+### Install with development dependencies
 ```bash
-# Для разработки (линтеры, тесты)
 pip install -e ".[dev]"
-
-# Для GPU поддержки (требуется CUDA)
-pip install -e ".[gpu]"
-
-# Для документации
-pip install -e ".[docs]"
 ```
 
-### Зависимости проекта
-Зависимости управляются через `pyproject.toml`:
-- **Основные**: requests, sentence-transformers, faiss-cpu, beautifulsoup4
-- **Разработка**: pytest, black, isort, flake8, mypy
-- **GPU**: faiss-gpu, cudatoolkit
-- **Документация**: sphinx, sphinx-rtd-theme
+## Usage
 
-## 🔧 Основные возможности
-
-- 📚 **Загрузка FB2 файлов** с автоматическим парсингом и обработкой метаданных
-- 🔍 **Семантический поиск** по произведениям с использованием FAISS
-- 🤖 **Генерация ответов** с использованием DeepSeek API через RAG
-- 📊 **Оптимизированная работа** с большими текстами (до 50M+ символов)
-- 💾 **Сохранение и загрузка** векторных индексов
-- 🎯 **Автоматическое чанкование** текста с учетом русского языка
-
-## 🎮 Доступные команды
-
-После установки доступны команды:
-
+### Running the main application
 ```bash
-# Основное приложение
-literature-rag
+python litragdstop/src/main.py
+```
 
-# Загрузка книг
-rag-load-books
+## Project Structure
 
-# Запуск тестов
+```
+lit_rag_ds/
+├── pyproject.toml          # Project configuration and dependencies
+├── README.md               # Documentation
+├── LICENSE                 # License information
+├── litragdstop/
+│   └── src/
+│       ├── main.py         # Main entry point
+│       └── litragds/       # Core package modules
+│           ├── __init__.py
+│           └── example_module.py
+└── tests/                  # Test files (optional)
+```
+
+## Development
+
+### Setting up the development environment
+1. Clone the repository
+2. Install in development mode: `pip install -e .`
+3. Install development dependencies: `pip install -e ".[dev]"`
+
+### Running tests
+```bash
 pytest
-
-# Проверка типов
-mypy src/
-
-# Форматирование кода
-black src/
-isort src/
 ```
 
-## 📊 Рекомендации по объемам
+## License
 
-| Сценарий | Максимум символов | Рекомендуемый чанк | Произведений |
-|----------|------------------|-------------------|-------------|
-| Небольшая коллекция | 2 млн | 1,000 | 5-10 |
-| Средняя библиотека | 10 млн | 1,200 | 20-50 |
-| Большая коллекция | 50 млн | 1,500 | 100+ |
-
-## 🎯 Примеры вопросов
-
-- "Какие темы любви поднимаются в русской литературе?"
-- "Опиши образы главных героев в произведениях Толстого"
-- "Сравни социальные проблемы в разных произведениях"
-- "Найди цитаты о природе в русской классике"
-- "Как раскрывается тема свободы в произведениях из базы?"
-
-## 🔍 Расширенное использование
-
-### Пакетная загрузка книг
-```bash
-# Рекурсивная загрузка всех FB2 файлов
-find /path/to/books -name "*.fb2" -exec cp {} data/fb2_books/ \;
-rag-load-books
-```
-
-### Использование в коде
-```python
-from src.optimized_rag import OptimizedRussianRAG
-
-# Инициализация системы
-rag = OptimizedRussianRAG()
-
-# Загрузка сохраненного индекса
-rag.load_index("indices/literature_index")
-
-# Поиск и генерация ответа
-response = rag.rag_query("Ваш вопрос о литературе")
-print(response)
-```
-
-### Программная загрузка книг
-```python
-from src.optimized_rag import OptimizedRussianRAG
-
-rag = OptimizedRussianRAG()
-rag.add_fb2_files("path/to/fb2/books")
-rag.save_index("my_library_index")
-```
-
-## ⚠️ Важные замечания
-
-1. **API ключ**: Получите на [DeepSeek Platform](https://platform.deepseek.com/)
-2. **Объемы**: Система оптимизирована для работы с 50+ млн символов
-3. **Форматы**: Поддерживаются FB2, ZIP с FB2, FB2.ZIP
-4. **Память**: Индексы сохраняются автоматически в папку `indices/`
-5. **Производительность**: Для больших коллекций рекомендуется использование GPU
-
-## 🧪 Тестирование и разработка
-
-```bash
-# Запуск тестов
-pytest
-
-# Запуск тестов с покрытием
-pytest --cov=src
-
-# Проверка типов
-mypy src/
-
-# Форматирование кода
-black src/
-isort src/
-flake8 src/
-```
-
-## 📞 Поддержка
-
-При возникновении проблем проверьте:
-
-1. **Наличие API ключа** в `.env` файле
-2. **Доступность директории** `data/fb2_books/`
-3. **Установлены ли все зависимости**: `pip install -e .`
-4. **Достаточно ли места** на диске для индексов
-5. **Доступ к интернету** для работы с DeepSeek API
-
-## 🔗 Полезные ссылки
-
-- [DeepSeek API Documentation](https://platform.deepseek.com/api-docs/)
-- [FAISS Documentation](https://github.com/facebookresearch/faiss)
-- [Sentence Transformers](https://www.sbert.net/)
-
-## 📄 Лицензия
-
-MIT License - смотрите файл LICENSE для деталей.
-```
-
-## Основные изменения в обновленном README:
-
-### 🆕 **Новые разделы:**
-1. **Установка через pyproject.toml** - современный подход к управлению зависимостями
-2. **Структура проекта** - обновлена с учетом новой организации
-3. **Команды после установки** - `literature-rag` и `rag-load-books`
-4. **Разделы для разработчиков** - тестирование, линтинг, типизация
-5. **Опциональные зависимости** - dev, gpu, docs
-
-### 🔄 **Обновленные разделы:**
-1. **Быстрый старт** - использование установленных команд
-2. **Структура проекта** - добавлены tests/, pyproject.toml
-3. **Установка** - переход с requirements.txt на pyproject.toml
-4. **Расширенное использование** - больше примеров программного API
-
-### 🎯 **Улучшения:**
-- Более четкая структура
-- Лучшее оформление эмодзи
-- Ясные инструкции для разных сценариев использования
-- Информация о тестировании и разработке
-
-Этот README теперь полностью соответствует современной структуре Python проекта с pyproject.toml! 🚀
+This project is licensed under the MIT License - see the LICENSE file for details.
