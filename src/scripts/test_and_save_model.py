@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import filter_stderror # noqa: F401
 from sentence_transformers import SentenceTransformer
 from sentence_transformers.models import Transformer, Pooling
