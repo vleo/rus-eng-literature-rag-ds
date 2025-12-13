@@ -7,10 +7,9 @@ logger = setup_logging()
 
 import os
 import sys
+import subprocess
 from pathlib import Path
 from dotenv import load_dotenv
-
-from litragds.main_app import app_main
 
 load_dotenv()
 
@@ -50,6 +49,54 @@ def check_prerequisites():
     return True
 
 
+def run_simple_test():
+    """Run the simple embedding test in a separate process"""
+    try:
+        # Run the simple test functionality as a subprocess
+        cmd = [
+            sys.executable, "-c", 
+            f"import sys; sys.path.insert(0, './src'); "
+            f"from litragds.main_app import app_main; "
+            f"app_main('{str(model_path_p)}')"
+        ]
+        result = subprocess.run(cmd, cwd="/workspace", capture_output=False, text=True, check=True)
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Error running simple test: {e}")
+        return False
+    except Exception as e:
+        print(f"❌ Unexpected error: {e}")
+        return False
+
+
+def run_load_books():
+    """Run the load_books functionality in a separate process"""
+    try:
+        # Run load_books.py as a subprocess
+        result = subprocess.run([
+            sys.executable, "-c", 
+            "import sys; sys.path.insert(0, './src'); "
+            "from litragds.load_books import main; main()"
+        ], cwd="/workspace", capture_output=False, text=True, check=True)
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Error running load_books: {e}")
+        return False
+    except Exception as e:
+        print(f"❌ Unexpected error: {e}")
+        return False
+
+
+def show_menu():
+    """Show menu options to user"""
+    print("\n🎭 Literature RAG System - Menu")
+    print("=" * 40)
+    print("1. Test embedding functionality (simple test)")
+    print("2. Load books into RAG system")
+    print("3. Exit")
+    print("-" * 40)
+
+
 def main():
     """Main application"""
     logger.info("🎭 Literature RAG System")
@@ -60,10 +107,30 @@ def main():
     if not check_prerequisites():
         sys.exit(1)
 
-    # Import after checks
-
-    # Run the application
-    app_main(str(model_path_p))
+    # Show menu and get user choice
+    while True:
+        show_menu()
+        try:
+            choice = input("Enter your choice (1-3): ").strip()
+            
+            if choice == "1":
+                print("\n🏃 Running simple embedding test...")
+                run_simple_test()
+            elif choice == "2":
+                print("\n📚 Running load books functionality...")
+                run_load_books()
+            elif choice == "3":
+                print("\n👋 Goodbye!")
+                break
+            else:
+                print("\n❌ Invalid choice. Please enter 1, 2, or 3.")
+                
+        except KeyboardInterrupt:
+            print("\n\n👋 Goodbye!")
+            break
+        except Exception as e:
+            print(f"\n❌ An error occurred: {e}")
+            continue
 
 
 if __name__ == "__main__":
