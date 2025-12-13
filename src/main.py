@@ -1,14 +1,22 @@
-# !/usr/bin/env python3
+#!/usr/bin/env python3
 """
 Main application file with local model support
 """
+from litragds.filter_stderror import filter_stderr, setup_logging
+#setup_logging()
+filter_stderr()
 
 import os
 import sys
 from pathlib import Path
 from dotenv import load_dotenv
 
+from litragds.main_app import app_main
+
 load_dotenv()
+
+model_path_p = Path("./models_cache/paraphrase-multilingual-MiniLM-L12-v2")
+
 
 def check_prerequisites():
     """Check if all prerequisites are met"""
@@ -21,10 +29,9 @@ def check_prerequisites():
         return False
 
     # Check model
-    model_path = Path("./models_cache/paraphrase-multilingual-MiniLM-L12-v2")
-    if not model_path.exists():
+    if not model_path_p.exists():
         print("❌ Model not found")
-        print(f"   Expected at: {model_path.absolute()}")
+        print(f"   Expected at: {model_path_p.absolute()}")
         print("\n💡 Download the model:")
         print("   python scripts/download_models.py")
         return False
@@ -33,7 +40,7 @@ def check_prerequisites():
     required_files = ["pytorch_model.bin", "config.json"]
     missing_files = []
     for file in required_files:
-        if not (model_path / file).exists():
+        if not (model_path_p / file).exists():
             missing_files.append(file)
 
     if missing_files:
@@ -54,10 +61,9 @@ def main():
         sys.exit(1)
 
     # Import after checks
-    from litragds.main_app import app_main
 
     # Run the application
-    app_main()
+    app_main(str(model_path_p))
 
 
 if __name__ == "__main__":

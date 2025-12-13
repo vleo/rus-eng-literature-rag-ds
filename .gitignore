@@ -55,4 +55,4 @@ secrets/
 !/.env.example  # keep example template if present
 
 # rus-eng-literature-rag specific
-logs/*.log
+src/logs/*.log
