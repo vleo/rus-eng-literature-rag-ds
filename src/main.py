@@ -3,7 +3,7 @@
 Main application file with local model support
 """
 from litragds.filter_stderror import setup_logging
-setup_logging()
+logger = setup_logging()
 
 import os
 import sys
@@ -52,6 +52,7 @@ def check_prerequisites():
 
 def main():
     """Main application"""
+    logger.info("🎭 Literature RAG System")
     print("\n🎭 Literature RAG System")
     print("=" * 50)
 
