@@ -2,9 +2,8 @@
 """
 Main application file with local model support
 """
-from litragds.filter_stderror import filter_stderr, setup_logging
-#setup_logging()
-filter_stderr()
+from litragds.filter_stderror import setup_logging
+setup_logging()
 
 import os
 import sys
