@@ -1,5 +1,5 @@
 """
-logging_setup.py
+filter_stderror.py
 
 Robust, no-basicConfig logging configuration for RAG/ML applications.
 Features:
@@ -137,11 +137,13 @@ def setup_logging(
     stderr_logger.setLevel(logging.WARNING)
     stderr_logger.propagate = False  # 🔑 isolation
 
-    if not stderr_logger.handlers:
-        proxy_handler = logging.StreamHandler(sys.__stderr__)
-        proxy_handler.setFormatter(logging.Formatter("[STDERR] %(message)s"))
-        proxy_handler.setLevel(logging.WARNING)
-        stderr_logger.addHandler(proxy_handler)
+    # Clear any existing handlers to ensure correct formatting
+    stderr_logger.handlers.clear()
+    
+    proxy_handler = logging.StreamHandler(sys.__stderr__)
+    proxy_handler.setFormatter(logging.Formatter("[STDERR] %(message)s"))
+    proxy_handler.setLevel(logging.WARNING)
+    stderr_logger.addHandler(proxy_handler)
 
     # Compile suppression patterns
     default_patterns = [
