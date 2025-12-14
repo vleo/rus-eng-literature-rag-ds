@@ -46,7 +46,7 @@ def app_main(model_path_v):
         print("✅ Generic RAG system initialized")
     
     # Check if index exists and load it
-    index_path = "../indices/literature_index"
+    index_path = f"./indices/literature_index_russian"
     try:
         rag_system.load_index(index_path)
         print(f"✅ Vector index loaded from {index_path}")
@@ -69,6 +69,7 @@ def app_main(model_path_v):
     print("\n🎯 RAG System Ready!")
     print("Commands:")
     print("  - Type a question to get RAG response")
+    print("  - 'norag: <prompt>' - Allows to get DeepSeek response w/o RAG")
     print("  - 'test_embed' - Test embedding functionality")
     print("  - 'test_api' - Test DeepSeek API connection")
     print("  - 'stats' - Show database statistics")
@@ -89,6 +90,9 @@ def app_main(model_path_v):
             elif user_input.lower() == 'test_api':
                 # Test API connection
                 response = rag_system.query_deepseek("Hello, are you working?", temperature=0.1)
+                print(f"🤖 API Response: {response}")
+            elif user_input.lower()[:6] == 'norag:':
+                response = rag_system.query_deepseek(user_input.lower()[6:], temperature=0.1)
                 print(f"🤖 API Response: {response}")
             elif user_input.lower() == 'stats':
                 # Show statistics
