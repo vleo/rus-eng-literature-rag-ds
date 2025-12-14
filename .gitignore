@@ -1,58 +1,29 @@
-# Byte-compiled / optimized / DLL files
+```
+# Compiled Python files
+*.pyc
 __pycache__/
-*.py[cod]
-*$py.class
 
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# Virtual environments (common names)
-.env
-.venv
-env/
+# Virtual environments
 venv/
-ENV/
-.env.local
-.venv.local
+.venv/
+.env
+*.env
 
-# IDE / editors
-.idea/
-.vscode/
-*.swp
-*.swo
-.DS_Store
-
-# Testing
+# Test files
 .pytest_cache/
 .coverage
+coverage/
 htmlcov/
-.tox/
 
-# Jupyter / IPython
-.ipynb_checkpoints/
-*.ipynb
+# Logs
+*.log
 
-# Local config overrides
-*.local
-config/
-secrets/
-.env*
-!/.env.example  # keep example template if present
+# Temporary files
+*.tmp
+*.swp
+*.swo
 
-# rus-eng-literature-rag specific
-src/logs/*.log
+# OS generated files
+.DS_Store
+Thumbs.db
+```

@@ -1,6 +1,7 @@
 # src/optimized_rag.py
 from litragds.base_rag import BaseRAGSystem
 from litragds.fb2_loader import FB2Loader
+from litragds.text_loader import TextLoader
 from typing import List, Dict, Any
 import logging
 
@@ -17,6 +18,7 @@ class OptimizedRAG(BaseRAGSystem):
             local_files_only=True
         )
         self.fb2_loader = FB2Loader()
+        self.text_loader = TextLoader()
         self.total_chars_processed = 0
 
         # Test model
@@ -127,6 +129,20 @@ class OptimizedRAG(BaseRAGSystem):
 
         if not documents:
             logger.warning("No documents extracted from FB2 files")
+            return 0
+
+        texts = [doc['text'] for doc in documents]
+        metadata = [doc['metadata'] for doc in documents]
+
+        return self.add_documents_optimized(texts, metadata)
+
+    def add_text_files(self, directory_path: str, file_pattern: str = "*.txt") -> int:
+        """Add plain text files to vector database"""
+        print(f"📝 Loading text files from {directory_path}...")
+        documents = self.text_loader.load_text_directory(directory_path, file_pattern)
+
+        if not documents:
+            logger.warning("No documents extracted from text files")
             return 0
 
         texts = [doc['text'] for doc in documents]

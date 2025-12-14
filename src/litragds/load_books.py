@@ -74,9 +74,16 @@ def main_lb(model_path_v, fb2_directory_v, indices_directory_v, deepseek_api_key
     fb2_files.extend(glob.glob(os.path.join(fb2_directory_v, "*.fb2.zip")))
     fb2_files.extend(glob.glob(os.path.join(fb2_directory_v, "*.zip")))
 
-    if not fb2_files:
-        print(f"❌ No FB2 files found in {fb2_directory_v}")
-        print("Add files with extensions: .fb2, .zip, .fb2.zip")
+    # Also check for text files
+    text_files = []
+    text_extensions = ["*.txt", "*.text", "*.md", "*.markdown"]
+    for ext in text_extensions:
+        text_files.extend(glob.glob(os.path.join(fb2_directory_v, ext)))
+        text_files.extend(glob.glob(os.path.join(fb2_directory_v, ext.upper())))
+
+    if not fb2_files and not text_files:
+        print(f"❌ No FB2 or text files found in {fb2_directory_v}")
+        print("Add files with extensions: .fb2, .zip, .fb2.zip, .txt, .text, .md, .markdown")
         return
 
     print(f"📁 Found {len(fb2_files)} FB2 files:")
@@ -84,6 +91,13 @@ def main_lb(model_path_v, fb2_directory_v, indices_directory_v, deepseek_api_key
         print(f"   📄 {os.path.basename(file)}")
     if len(fb2_files) > 10:
         print(f"   ... and {len(fb2_files) - 10} more")
+
+    if text_files:
+        print(f"\n📝 Found {len(text_files)} text files:")
+        for file in text_files[:10]:  # Show first 10
+            print(f"   📝 {os.path.basename(file)}")
+        if len(text_files) > 10:
+            print(f"   ... and {len(text_files) - 10} more")
 
     # Ask for language
     print("\n🌍 Select language for processing:")
@@ -107,9 +121,22 @@ def main_lb(model_path_v, fb2_directory_v, indices_directory_v, deepseek_api_key
 
     # Load books
     print(f"\n🔄 Loading books from {fb2_directory_v}...")
-    chunks_added = rag_system.add_fb2_files(fb2_directory_v)
+    
+    # Load FB2 files if any exist
+    fb2_chunks_added = 0
+    if fb2_files:
+        print("📚 Loading FB2 files...")
+        fb2_chunks_added = rag_system.add_fb2_files(fb2_directory_v)
+    
+    # Load text files if any exist
+    text_chunks_added = 0
+    if text_files:
+        print("📝 Loading text files...")
+        text_chunks_added = rag_system.add_text_files(fb2_directory_v)
+    
+    total_chunks_added = fb2_chunks_added + text_chunks_added
 
-    if chunks_added > 0:
+    if total_chunks_added > 0:
         # Save index
         index_path = f"{indices_directory_v}/literature_index_{language}"
         rag_system.save_index(index_path)
