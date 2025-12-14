@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 class OptimizedRAG(BaseRAGSystem):
     """Optimized RAG system with chunking and FB2 support using local model"""
 
-    def __init__(self, deepseek_api_key: str = None, model_path: str = None):
+    def __init__(self, deepseek_api_key: str, model_path: str):
         super().__init__(
             deepseek_api_key=deepseek_api_key,
             model_path=model_path,

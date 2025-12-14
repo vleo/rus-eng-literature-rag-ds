@@ -5,7 +5,7 @@ import requests
 import numpy as np
 import faiss
 from sentence_transformers import SentenceTransformer
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 import logging
 from abc import ABC, abstractmethod
 
@@ -17,19 +17,20 @@ class BaseRAGSystem(ABC):
 
     DEFAULT_MODEL_PATH = "./models_cache/paraphrase-multilingual-MiniLM-L12-v2"
 
-    def __init__(self, deepseek_api_key: str = None, model_path: str = None,
-                 local_files_only: bool = True):
+    def __init__(self,
+                 deepseek_api_key: str,
+                 model_path: str,
+                 local_files_only: bool = True,
+                 ):
         """
         Args:
             model_path: Path to local model directory
             local_files_only: If True, only use local files, don't download
         """
-        self.deepseek_api_key = deepseek_api_key or os.getenv('DEEPSEEK_API_KEY')
-        if not self.deepseek_api_key:
-            raise ValueError("DeepSeek API key not provided. Set DEEPSEEK_API_KEY in .env file")
+        self.deepseek_api_key = deepseek_api_key
 
         # Determine model path
-        self.model_path = model_path or self.DEFAULT_MODEL_PATH
+        self.model_path = model_path
 
         # Check if model exists
         if not os.path.exists(self.model_path):

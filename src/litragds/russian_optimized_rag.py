@@ -6,9 +6,7 @@ from typing import Dict, Any
 class RussianOptimizedRAG(OptimizedRAG):
     """Optimized RAG system for Russian literature with local model"""
 
-    def __init__(self, deepseek_api_key: str = None, model_path: str = None):
-        if model_path is None:
-            model_path = "../models_cache/paraphrase-multilingual-MiniLM-L12-v2"
+    def __init__(self, deepseek_api_key: str, model_path: str):
 
         super().__init__(
             deepseek_api_key=deepseek_api_key,

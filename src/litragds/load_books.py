@@ -15,10 +15,8 @@ from litragds.russian_optimized_rag import RussianOptimizedRAG
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 
-def check_model_exists(model_path: str = None) -> bool:
+def check_model_exists(model_path_v: str = None) -> bool:
     """Check if model exists locally"""
-    if model_path is None:
-        model_path = "../models_cache/paraphrase-multilingual-MiniLM-L12-v2"
 
     required_files = [
         "pytorch_model.bin",
@@ -26,9 +24,9 @@ def check_model_exists(model_path: str = None) -> bool:
         "sentence_bert_config.json"
     ]
 
-    model_dir = Path(model_path)
+    model_dir = Path(model_path_v)
     if not model_dir.exists():
-        print(f"❌ Model directory not found: {model_path}")
+        print(f"❌ Model directory not found: {model_path_v}")
         return False
 
     missing_files = []
@@ -49,11 +47,11 @@ def check_model_exists(model_path: str = None) -> bool:
         print("4. git clone https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
         return False
 
-    print(f"✅ Model found at: {model_path}")
+    print(f"✅ Model found at: {model_path_v}")
     return True
 
 
-def main():
+def main_lb(model_path_v, fb2_directory_v, indices_directory_v, deepseek_api_key):
     """Основная функция загрузки книг"""
     load_dotenv()
 
@@ -61,24 +59,23 @@ def main():
     print("=" * 40)
 
     # Check model
-    if not check_model_exists():
+    if not check_model_exists(model_path_v=model_path_v):
         return
 
     # Check books directory
-    fb2_directory = "../data/fb2_books"
-    if not os.path.exists(fb2_directory):
-        print(f"❌ Directory {fb2_directory} not found")
+    if not os.path.exists(fb2_directory_v):
+        print(f"❌ Directory {fb2_directory_v} not found")
         print("Create directory and add FB2 files")
         return
 
     # List FB2 files
     import glob
-    fb2_files = glob.glob(os.path.join(fb2_directory, "*.fb2"))
-    fb2_files.extend(glob.glob(os.path.join(fb2_directory, "*.fb2.zip")))
-    fb2_files.extend(glob.glob(os.path.join(fb2_directory, "*.zip")))
+    fb2_files = glob.glob(os.path.join(fb2_directory_v, "*.fb2"))
+    fb2_files.extend(glob.glob(os.path.join(fb2_directory_v, "*.fb2.zip")))
+    fb2_files.extend(glob.glob(os.path.join(fb2_directory_v, "*.zip")))
 
     if not fb2_files:
-        print(f"❌ No FB2 files found in {fb2_directory}")
+        print(f"❌ No FB2 files found in {fb2_directory_v}")
         print("Add files with extensions: .fb2, .zip, .fb2.zip")
         return
 
@@ -102,19 +99,19 @@ def main():
             rag_system = EnglishOptimizedRAG()
             print("✅ English RAG system initialized")
         else:
-            rag_system = RussianOptimizedRAG()
+            rag_system = RussianOptimizedRAG(deepseek_api_key=deepseek_api_key,model_path=model_path_v)
             print("✅ Russian RAG system initialized")
     except Exception as e:
         print(f"❌ Error initializing RAG system: {e}")
         return
 
     # Load books
-    print(f"\n🔄 Loading books from {fb2_directory}...")
-    chunks_added = rag_system.add_fb2_files(fb2_directory)
+    print(f"\n🔄 Loading books from {fb2_directory_v}...")
+    chunks_added = rag_system.add_fb2_files(fb2_directory_v)
 
     if chunks_added > 0:
         # Save index
-        index_path = f"indices/literature_index_{language}"
+        index_path = f"{indices_directory_v}/literature_index_{language}"
         rag_system.save_index(index_path)
 
         # Show statistics
@@ -136,4 +133,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    model_path = "../models_cache/paraphrase-multilingual-MiniLM-L12-v2"
+    fb2_directory = "../data/fb2_books"
+    indices_directory = "../indices"
+    
+    main_lb(model_path_v=model_path, fb2_directory_v=fb2_directory, deepseek_api_key="xyzzy", indices_directory_v=indices_directory)

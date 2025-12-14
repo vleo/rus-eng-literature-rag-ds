@@ -41,6 +41,7 @@ class LoggingStderrProxy:
         self.debug_suppressed = debug_suppressed
 
     def write(self, msg: str) -> None:
+        #print(f"LoggingStderrProxy msg: {msg}")
         if not msg.strip():
             return
         # Check suppression
@@ -160,6 +161,7 @@ def setup_logging(
         debug_suppressed=debug_suppressed,
     )
     sys.stderr = proxy
+    #print(f"sys.stderr proxy: {sys.stderr}")
 
     # ----------------------------
     # 4. Silence noisy libraries

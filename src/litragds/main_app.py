@@ -2,7 +2,7 @@
 Main application logic (separated from startup checks)
 """
 
-import os
+import os, sys
 from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer
 
