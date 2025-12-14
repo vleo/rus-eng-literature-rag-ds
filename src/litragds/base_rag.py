@@ -7,6 +7,7 @@ import faiss
 from sentence_transformers import SentenceTransformer
 from typing import List, Dict, Any
 import logging
+import time
 from abc import ABC, abstractmethod
 
 logger = logging.getLogger(__name__)
@@ -100,7 +101,7 @@ class BaseRAGSystem(ABC):
 
         logger.info(f"Added {len(texts)} documents to vector database")
 
-    def search_similar(self, query: str, k: int = 5) -> List[Dict]:
+    def search_similar(self, query: str, k: int = 7) -> List[Dict]:
         """Search for similar documents"""
         # Generate query embedding
         query_embedding = self.embedding_model.encode([query], normalize_embeddings=True)
@@ -120,7 +121,7 @@ class BaseRAGSystem(ABC):
 
         return results
 
-    def query_deepseek(self, prompt: str, context: str = None, temperature: float = 0.7) -> str:
+    def query_deepseek(self, prompt: str, context: str = None, temperature: float = 0.2) -> str:
         """Query DeepSeek API"""
         headers = {
             "Content-Type": "application/json",
@@ -145,7 +146,11 @@ class BaseRAGSystem(ABC):
         }
 
         try:
-            response = requests.post(self.api_url, headers=headers, json=data, timeout=30)
+            start = time.perf_counter()
+            response = requests.post(self.api_url, headers=headers, json=data, timeout=300)
+            elapsed = time.perf_counter() - start
+            print(f"Requests.post() took: {elapsed:.10f} seconds")
+            
             response.raise_for_status()
 
             result = response.json()
@@ -155,7 +160,7 @@ class BaseRAGSystem(ABC):
             logger.error(f"API request failed: {e}")
             return f"Error accessing API: {e}"
 
-    def rag_query(self, question: str, k: int = 5) -> str:
+    def rag_query(self, question: str, k: int = 7) -> str:
         """Full RAG pipeline"""
         similar_docs = self.search_similar(question, k)
 

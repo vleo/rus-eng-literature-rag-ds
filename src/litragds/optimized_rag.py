@@ -134,6 +134,22 @@ class OptimizedRAG(BaseRAGSystem):
 
         return self.add_documents_optimized(texts, metadata)
 
+    def get_system_prompt(self) -> str:
+        """Return generic system prompt for multi-language literature"""
+        return """You are an expert in literature analysis. 
+Answer questions using the provided context from literary works. 
+Be accurate, informative and cite sources when possible."""
+
+    def get_chunker_settings(self) -> Dict[str, Any]:
+        """Return generic chunking settings for multi-language support"""
+        return {
+            'optimal_chunk_size': 1000,
+            'max_chunk_size': 2000,
+            'min_chunk_size': 300,
+            'overlap_size': 100,
+            'max_total_chars': 50_000_000
+        }
+
     def get_library_stats(self) -> Dict[str, Any]:
         """Get library statistics"""
         stats = {

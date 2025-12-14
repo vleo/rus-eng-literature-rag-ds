@@ -10,6 +10,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from litragds.english_optimized_rag import EnglishOptimizedRAG
 from litragds.russian_optimized_rag import RussianOptimizedRAG
+from litragds.optimized_rag import OptimizedRAG
 
 # Add to path
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
@@ -89,18 +90,32 @@ def main_lb(model_path_v, fb2_directory_v, indices_directory_v, deepseek_api_key
     print("\n🌍 Select language for processing:")
     print("1 - Russian / Русский")
     print("2 - English / Английский")
+    print("3 - Generic Multilingual")
 
     lang_choice = input("\nYour choice: ").strip()
-    language = 'russian' if lang_choice == '1' else 'english'
+    language = 'russian' if lang_choice == '1' else ('english' if lang_choice == '2' else 'multilingual')
 
     # Initialize RAG system
     try:
         if language == 'english':
-            rag_system = EnglishOptimizedRAG()
+            rag_system = EnglishOptimizedRAG(
+                deepseek_api_key=deepseek_api_key,
+                model_path=model_path_v
+            )
             print("✅ English RAG system initialized")
-        else:
-            rag_system = RussianOptimizedRAG(deepseek_api_key=deepseek_api_key,model_path=model_path_v)
+        elif language == 'russian':
+            rag_system = RussianOptimizedRAG(
+                deepseek_api_key=deepseek_api_key,
+                model_path=model_path_v
+            )
             print("✅ Russian RAG system initialized")
+        else:
+            # Use generic OptimizedRAG
+            rag_system = OptimizedRAG(
+                deepseek_api_key=deepseek_api_key,
+                model_path=model_path_v
+            )
+            print("✅ Generic RAG system initialized")
     except Exception as e:
         print(f"❌ Error initializing RAG system: {e}")
         return
@@ -121,12 +136,30 @@ def main_lb(model_path_v, fb2_directory_v, indices_directory_v, deepseek_api_key
         print(f"\n🎉 Loading completed!")
         print(f"✅ Added chunks: {stats['total_documents']}")
         print(f"✅ Processed characters: {stats['total_characters']:,}")
+        print(f"✅ Average chunk size: {stats['average_chunk_size']}")
         print(f"✅ Authors: {len(library_stats['total_authors'])}")
         print(f"✅ Works: {len(library_stats['total_works'])}")
         print(f"💾 Index saved to: {index_path}")
 
         if library_stats['total_authors']:
-            print(f"\n👥 Loaded authors: {', '.join(library_stats['total_authors'])}")
+            print(f"\n👥 Loaded authors: {', '.join(library_stats['total_authors'][:10])}")  # Show first 10
+            if len(library_stats['total_authors']) > 10:
+                print(f"... and {len(library_stats['total_authors']) - 10} more")
+
+        # Test the system with a sample query
+        print(f"\n🧪 Testing RAG system...")
+        try:
+            # Test basic functionality
+            sample_question = "What is this collection about?"
+            response = rag_system.rag_query(sample_question, k=3)
+            print(f"Sample RAG response: {response[:200]}..." if len(response) > 200 else f"Sample RAG response: {response}")
+            
+            # Test API functionality separately
+            api_response = rag_system.query_deepseek("Briefly introduce yourself as a literature expert.", temperature=0.3)
+            print(f"API response: {api_response[:150]}..." if len(api_response) > 150 else f"API response: {api_response}")
+            
+        except Exception as e:
+            print(f"⚠️ Warning - Test failed: {e}")
 
     else:
         print("❌ Failed to load books")
@@ -137,4 +170,9 @@ if __name__ == "__main__":
     fb2_directory = "../data/fb2_books"
     indices_directory = "../indices"
     
-    main_lb(model_path_v=model_path, fb2_directory_v=fb2_directory, deepseek_api_key="xyzzy", indices_directory_v=indices_directory)
+    main_lb(
+        model_path_v=model_path,
+        fb2_directory_v=fb2_directory,
+        deepseek_api_key="xyzzy",  # Placeholder - will be replaced by env var
+        indices_directory_v=indices_directory
+    )

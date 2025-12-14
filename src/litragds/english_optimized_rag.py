@@ -30,17 +30,3 @@ class EnglishOptimizedRAG(OptimizedRAG):
             deepseek_api_key=deepseek_api_key,
             model_path=model_path
         )
-
-    def get_system_prompt(self) -> str:
-        return """You are an expert in English literature analysis. 
-Answer questions in English using the provided context from literary works. 
-Be accurate and informative."""
-
-    def get_chunker_settings(self) -> Dict[str, Any]:
-        return {
-            'optimal_chunk_size': 1000,
-            'max_chunk_size': 2000,
-            'min_chunk_size': 300,
-            'overlap_size': 100,
-            'max_total_chars': 50_000_000
-        }
